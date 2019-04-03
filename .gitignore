@@ -15,7 +15,7 @@
 *.iws
 *.iml
 *.ipr
-*.yml
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -24,3 +24,5 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+./src/Mindmap-Frontend-Ant/package-lock.json

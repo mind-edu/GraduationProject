@@ -6,12 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity(label = "Student")
-public class Student {
-    @Id
-    @GeneratedValue
-    private Long id;
-    private String name;
-    private String password;
+public class Student extends UserTemp{
 
     @Relationship(type = "STUDY_IN")
     private Set<Course> courses;
@@ -43,30 +38,5 @@ public class Student {
             notes = new HashSet<>();
         }
         notes.add(note);
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

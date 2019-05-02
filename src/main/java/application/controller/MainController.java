@@ -48,9 +48,9 @@ public class MainController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public Success register(@RequestBody UserTemp user) {
-        String name = user.getName();
+        String name = user.getUser_name();
         String identity = user.getIdentity();
-        String password = user.getPassword();
+        String password = user.getUser_pwd();
 
         Success success = new Success();
         success.setSuccess(false);
@@ -65,6 +65,7 @@ public class MainController {
                 teacher = userService.saveTeacher(teacher);
                 System.out.println("      老师id:    "+ teacher.getId() + "!!!!!!!!!!!");
                 success.setSuccess(true);
+                success.setId(teacher.getId());
 
             } else {
                 Student student = new Student();
@@ -74,6 +75,7 @@ public class MainController {
                 student = userService.saveStudent(student);
                 System.out.println("      学生id:    "+ student.getId() + "!!!!!!!!!!!");
                 success.setSuccess(true);
+                success.setId(student.getId());
             }
             return success;
         }
@@ -85,8 +87,8 @@ public class MainController {
     @RequestMapping(value = "/modify_password", method = RequestMethod.POST)
     public Success modifyPassword(@RequestBody UserTemp user) {
 
-        String name = user.getName();
-        String password = user.getPassword();
+        String name = user.getUser_name();
+        String password = user.getUser_pwd();
 
         //首先判断user_name是否已经存在
         boolean if_exist = userService.findUser(name);

@@ -31,15 +31,20 @@ public class MainController {
             Teacher tea = userService.findTeacherByName(name);
             //再判断密码是否一致
             if (tea != null) {
-                if (tea.getPassword().equals(password))
+                if (tea.getPassword().equals(password)) {
                     s.setSuccess(true);
+                    s.setId(tea.getId());
+                }
             }
         } else if (identity.equals("student")) {
             Student stu = userService.findStudentByName(name);
             //再判断密码是否一致
             if (stu != null) {
-                if (stu.getPassword().equals(password))
+                if (stu.getPassword().equals(password)) {
                     s.setSuccess(true);
+                    s.setId(stu.getId());
+                }
+
             }
         }
 

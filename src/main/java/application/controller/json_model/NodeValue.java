@@ -6,9 +6,11 @@ package application.controller.json_model;
  */
 public class NodeValue {
     private String node_id;
+    private long nid;
     private String node_topic;
     private int score;
     private int studentScore;
+    private int totalScore;
     private double value;
 
 
@@ -50,5 +52,21 @@ public class NodeValue {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public long getNid() {
+        return nid;
+    }
+
+    public void setNid(long nid) {
+        this.nid = nid;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(int totalScore) {
+        this.totalScore = totalScore;
     }
 }

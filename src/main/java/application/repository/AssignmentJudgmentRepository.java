@@ -24,4 +24,7 @@ public interface AssignmentJudgmentRepository extends Neo4jRepository<Assignment
 
     @Query("MATCH (a:Assignment_judgment) where ID(a) = {0} RETURN a")
     AssignmentJudgment getAssignmentJudgmentById(Long id);
+
+    @Query("MATCH (n:Assignment_judgment) RETURN n ")
+    List<AssignmentJudgment> getAll();
 }

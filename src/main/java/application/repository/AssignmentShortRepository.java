@@ -25,4 +25,11 @@ public interface AssignmentShortRepository extends Neo4jRepository<AssignmentSho
 
     @Query("MATCH (a:Assignment_short) where ID(a) = {0} RETURN a")
     AssignmentShort getAssignmentShortById(Long id);
+
+    @Query("MATCH (n:Assignment_short) RETURN n ")
+    List<AssignmentShort> getAll();
+
+    @Query("MATCH (n:Node)-[r:HAS_ASSIGNMENT_SHORT]-(s:Assignment_short)" +
+            " where ID(n) = {0} return s")
+    List<AssignmentShort> getAssignmentShortsByNodeId(long nid);
 }

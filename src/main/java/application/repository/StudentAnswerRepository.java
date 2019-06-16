@@ -10,4 +10,9 @@ public interface StudentAnswerRepository extends CrudRepository<StudentAnswer, L
     StudentAnswer findByStudentNameAndAndAssignmentId(String name, String id);
 
     List<StudentAnswer> findByAssignmentId(String id);
+
+    StudentAnswer findByStudentIdAndAndAssignmentLongId(long sid, long aid);
+
+    List<StudentAnswer> findByAssignmentLongId(long aid);
+
 }

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface NodeRepository extends Neo4jRepository<Node, Long> {
+    @Query("MATCH (n:Node) where ID(n)={0} return n")
+    Node findByNodeLongId(Long id);
+
     @Query("MATCH (n:Node) WHERE n.course_mindmap = ({course_mindmap}) and n.node_id=({node_id}) RETURN n")
     Node findByNodeId(@Param("course_mindmap") String course_mindmap, @Param("node_id") String node_id);
 

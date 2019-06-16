@@ -27,6 +27,8 @@ public class CoursewaresController {
 
     @Value("${resourcesTitle}")
     private String resourcesTitle;
+    @Value("${helpFile}")
+    private String helpFile;
 
     @RequestMapping(value = "/coursewares/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.GET)
     public String[] coursewares(@PathVariable String course_id, @PathVariable String mindmap_id,
@@ -158,6 +160,20 @@ public class CoursewaresController {
                                           @PathVariable String node_id, @PathVariable String courseware, HttpServletResponse response) {
         final String filePath = resourcesTitle + course_id + "/" + mindmap_id + "/" + node_id + "/courseware/";
         String fileUrl = filePath + courseware;
+
+        try {
+            byte[] file = fileService.getFile(fileUrl);
+            return ResponseEntity.ok().body(file);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(404).body(new HashMap<>().put("error", "Failed to load courseware"));
+        }
+    }
+
+    @RequestMapping(value = "/view_help_video", method = RequestMethod.GET)
+    public ResponseEntity<?> view_help_video(HttpServletResponse response) {
+        String fileUrl = helpFile;
 
         try {
             byte[] file = fileService.getFile(fileUrl);

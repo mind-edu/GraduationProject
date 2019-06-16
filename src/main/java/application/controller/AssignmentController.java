@@ -16,7 +16,10 @@ public class AssignmentController {
     private NodeService nodeService;
     @Autowired
     private NodeChildService nodeChildService;
+    @Autowired
+    private UserService userService;
 
+    // 获取简答题列表
     @RequestMapping(value = "/shorts/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.GET)
     public List<AssignmentShort_json> shorts(
             @PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id) {
@@ -32,7 +35,7 @@ public class AssignmentController {
             short_json.setTitle(assignment_short.getTitle());
             short_json.setCorrect_answer(assignment_short.getCorrect_answer());
 
-            List<StudentAnswer> studentAnswers = nodeChildService.getStudentAns(shortId+assignment_short.getId());
+            List<StudentAnswer> studentAnswers = nodeChildService.getStudentAns(assignment_short.getId());
             short_json.setStudentAnswers(studentAnswers);
 
             short_jsons.add(short_json);
@@ -40,6 +43,29 @@ public class AssignmentController {
         return short_jsons;
     }
 
+    // 改 - 获取简答题列表
+//    @RequestMapping(value = "/shorts/{node_id}", method = RequestMethod.GET)
+//    public List<AssignmentShort_json> shorts2(@PathVariable long node_id) {
+//
+//        List<AssignmentShort> shorts = nodeChildService.getAssignmentShortsByNodeId(node_id);
+//
+//        List<AssignmentShort_json> short_jsons = new LinkedList<>();
+//
+//        for (AssignmentShort assignment_short :shorts){
+//            AssignmentShort_json short_json = new AssignmentShort_json();
+//            short_json.setAssignmentLongId(assignment_short.getId());
+//            short_json.setTitle(assignment_short.getTitle());
+//            short_json.setCorrect_answer(assignment_short.getCorrect_answer());
+//
+//            List<StudentAnswer> studentAnswers = nodeChildService.getStudentAns(assignment_short.getId());
+//            short_json.setStudentAnswers(studentAnswers);
+//
+//            short_jsons.add(short_json);
+//        }
+//        return short_jsons;
+//    }
+
+    // 学生回答简答题
     @RequestMapping(value = "/answer_short/{course_id}/{mindmap_id}/{node_id}/{student_name}", method = RequestMethod.POST)
     public Success answer_short(@PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id,@PathVariable String student_name,
                                    @RequestBody StudentAnswers stu_ans) {
@@ -58,13 +84,16 @@ public class AssignmentController {
             }
         }
         StudentAnswer studentAnswer;
+        Student student = userService.findStudentByName(student_name);
         //比对答案
         if(short_result != null){ //找到题目
-            studentAnswer = nodeChildService.getStudentAns(student_name, shortId+short_result.getId());
+            studentAnswer = nodeChildService.getStudentAns(student.getId(), short_result.getId());
             if (studentAnswer == null) { //该学生之前没有回答过这个问题,需要初始化
                 studentAnswer = new StudentAnswer();
                 studentAnswer.setStudentName(student_name);
+                studentAnswer.setStudentId(student.getId());
                 studentAnswer.setAssignmentId(shortId+short_result.getId());
+                studentAnswer.setAssignmentLongId(short_result.getId());
             }
             studentAnswer.setAnswer(stu_ans.getAnswer());
             nodeChildService.addStudentAnswer(studentAnswer);
@@ -73,6 +102,7 @@ public class AssignmentController {
         return s;
     }
 
+    // 所有学生对于某道简答题的回答
     @RequestMapping(value = "/student_answer_short/{course_id}/{mindmap_id}/{node_id}/{short_title}", method = RequestMethod.GET)
     public List<StudentAnswer> student_answer_short(@PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id,
                                                     @PathVariable String short_title) {
@@ -88,9 +118,10 @@ public class AssignmentController {
                 break;
             }
         }
-        return nodeChildService.getStudentAns(shortId+short_result.getId());
+        return nodeChildService.getStudentAns(short_result.getId());
     }
 
+    // 学生回答选择题
     @RequestMapping(value = "/answer_multiple/{course_id}/{mindmap_id}/{node_id}/{student_name}", method = RequestMethod.POST)
     public Success answer_multiple(@PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id,@PathVariable String student_name,
                                    @RequestBody StudentAnswers stu_ans) {
@@ -109,16 +140,22 @@ public class AssignmentController {
             }
         }
         StudentAnswer studentAnswer;
+        Student student = userService.findStudentByName(student_name);
+
         //比对答案
         if(multiple_result != null){ //找到题目
             int number_before = Integer.parseInt(multiple_result.getNumber());
             int correct_number_before =Integer.parseInt(multiple_result.getCorrect_number());
 
-            studentAnswer = nodeChildService.getStudentAns(student_name, multiId+multiple_result.getId());
+            studentAnswer = nodeChildService.getStudentAns(student.getId(), multiple_result.getId());
             if (studentAnswer == null) { //该学生之前没有回答过这个问题
                 studentAnswer = new StudentAnswer();
+
                 studentAnswer.setStudentName(student_name);
+                studentAnswer.setStudentId(student.getId());
                 studentAnswer.setAssignmentId(multiId+multiple_result.getId());
+                studentAnswer.setAssignmentLongId(multiple_result.getId());
+
                 studentAnswer.setAnswer(stu_ans.getAnswer());
                 nodeChildService.addStudentAnswer(studentAnswer);
                 multiple_result.setNumber((number_before+1)+"");
@@ -145,6 +182,7 @@ public class AssignmentController {
         return s;
     }
 
+    // 学生回答判断题
     @RequestMapping(value = "/answer_judgement/{course_id}/{mindmap_id}/{node_id}/{student_name}", method = RequestMethod.POST)
     public Success answer_judgement(@PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id,@PathVariable String student_name,
                                    @RequestBody StudentAnswers stu_ans) {
@@ -164,16 +202,22 @@ public class AssignmentController {
             }
         }
         StudentAnswer studentAnswer;
+        Student student = userService.findStudentByName(student_name);
+
         //比对答案
         if(judgment_result != null){ //找到题目
             int number_before = Integer.parseInt(judgment_result.getNumber());
             int correct_number_before =Integer.parseInt(judgment_result.getCorrect_number());
 
-            studentAnswer = nodeChildService.getStudentAns(student_name, judgeId+judgment_result.getId());
+            studentAnswer = nodeChildService.getStudentAns(student.getId(), judgment_result.getId());
             if (studentAnswer == null) { //该学生之前没有回答过这个问题
                 studentAnswer = new StudentAnswer();
+
                 studentAnswer.setStudentName(student_name);
+                studentAnswer.setStudentId(student.getId());
                 studentAnswer.setAssignmentId(judgeId+judgment_result.getId());
+                studentAnswer.setAssignmentLongId(judgment_result.getId());
+
                 studentAnswer.setAnswer(stu_ans.getAnswer());
                 nodeChildService.addStudentAnswer(studentAnswer);
                 judgment_result.setNumber((number_before+1)+"");
@@ -200,12 +244,15 @@ public class AssignmentController {
         return s;
     }
 
+    // 给学生的简答题列表
     @RequestMapping(value = "/multiples_student/{course_id}/{mindmap_id}/{node_id}/{student_name}", method = RequestMethod.GET)
     public List<AssignmentMultipleStudent> multiples_student(@PathVariable String course_id, @PathVariable String mindmap_id,
                                                              @PathVariable String node_id, @PathVariable String student_name) {
 
         String multiId = course_id + " " + mindmap_id + " " + node_id;
         List<AssignmentMultiple> multiples = nodeChildService.findMultis(multiId);
+
+        Student student = userService.findStudentByName(student_name);
 
         List<AssignmentMultipleStudent> multiples_student = new LinkedList<>();
         for (AssignmentMultiple multiple : multiples) {
@@ -219,7 +266,7 @@ public class AssignmentController {
             multiple_student.setOptionD(multiple.getOptionD());
             
             //
-            StudentAnswer studentAnswer = nodeChildService.getStudentAns(student_name, multiId+multiple.getId());
+            StudentAnswer studentAnswer = nodeChildService.getStudentAns(student.getId(), multiple.getId());
             if (studentAnswer == null)
                 multiple_student.setAnswer("");
             else 
@@ -231,12 +278,15 @@ public class AssignmentController {
         return multiples_student;
     }
 
+    // 给学生的判断题列表
     @RequestMapping(value = "/judgments_student/{course_id}/{mindmap_id}/{node_id}/{student_name}", method = RequestMethod.GET)
     public List<AssignmentJudgmentStudent> judgments_student(@PathVariable String course_id, @PathVariable String mindmap_id,
                                                              @PathVariable String node_id, @PathVariable String student_name) {
 
         String judgeId = course_id + " " + mindmap_id + " " + node_id;
         List<AssignmentJudgment> judgments = nodeChildService.findJudgements(judgeId);
+
+        Student student = userService.findStudentByName(student_name);
 
         List<AssignmentJudgmentStudent> judgments_student = new LinkedList<>();
         for (AssignmentJudgment judgment : judgments) {
@@ -245,7 +295,7 @@ public class AssignmentController {
             judgment_student.setAssignmentLongId(judgment.getId());
             judgment_student.setTitle(judgment.getTitle());
             
-            StudentAnswer studentAnswer = nodeChildService.getStudentAns(student_name, judgeId+judgment.getId());
+            StudentAnswer studentAnswer = nodeChildService.getStudentAns(student.getId(), judgment.getId());
             if (studentAnswer == null)
                 judgment_student.setAnswer("");
             else
@@ -257,12 +307,15 @@ public class AssignmentController {
         return judgments_student;
     }
 
+    // 给学生的简答题列表
     @RequestMapping(value = "/shorts_student/{course_id}/{mindmap_id}/{node_id}/{student_name}", method = RequestMethod.GET)
     public List<AssignmentShortStudent> shorts_student(@PathVariable String course_id, @PathVariable String mindmap_id,
                                                              @PathVariable String node_id, @PathVariable String student_name) {
 
         String shortId = course_id + " " + mindmap_id + " " + node_id;
         List<AssignmentShort> shorts = nodeChildService.findShorts(shortId);
+
+        Student student = userService.findStudentByName(student_name);
 
         List<AssignmentShortStudent> shorts_student = new LinkedList<>();
         for (AssignmentShort aShort : shorts) {
@@ -271,7 +324,7 @@ public class AssignmentController {
             short_student.setAssignmentLongId(aShort.getId());
             short_student.setTitle(aShort.getTitle());
 
-            StudentAnswer studentAnswer = nodeChildService.getStudentAns(student_name, shortId+aShort.getId());
+            StudentAnswer studentAnswer = nodeChildService.getStudentAns(student.getId(), aShort.getId());
             if (studentAnswer == null)
                 short_student.setAnswer("");
             else
@@ -283,6 +336,7 @@ public class AssignmentController {
         return shorts_student;
     }
 
+    // 给老师的选择题列表
     @RequestMapping(value = "/multiples_teacher/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.GET)
     public List<AssignmentMultiple_json> multiples_teacher(@PathVariable String course_id, @PathVariable String mindmap_id,
                                                            @PathVariable String node_id) {
@@ -309,6 +363,7 @@ public class AssignmentController {
         return multiple_jsons;
     }
 
+    // 给老师的判断题列表
     @RequestMapping(value = "/judgments_teacher/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.GET)
     public List<AssignmentJudgment_json> judgments_teacher(@PathVariable String course_id, @PathVariable String mindmap_id,
                                                            @PathVariable String node_id) {
@@ -331,6 +386,7 @@ public class AssignmentController {
         return judgment_jsons;
     }
 
+    // 发布选择题
     @RequestMapping(value = "/release_multiple/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.POST)
     public Success release_multiple(@PathVariable String course_id, @PathVariable String mindmap_id,
                                     @PathVariable String node_id, @RequestBody AssignmentMultiple multiple) {
@@ -358,6 +414,7 @@ public class AssignmentController {
         return success;
     }
 
+    // 发布判断题
     @RequestMapping(value = "/release_judgement/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.POST)
     public Success release_judgment(@PathVariable String course_id, @PathVariable String mindmap_id,
                                     @PathVariable String node_id, @RequestBody AssignmentJudgment judgment) {
@@ -385,6 +442,7 @@ public class AssignmentController {
         return success;
     }
 
+    // 发布简答题
     @RequestMapping(value = "/release_short/{course_id}/{mindmap_id}/{node_id}", method = RequestMethod.POST)
     public Success release_short(@PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id, @RequestBody AssignmentShort assignmentShort) {
 
@@ -412,6 +470,7 @@ public class AssignmentController {
     }
 
 
+    // 对于某个节点，学生的所有回答
     @RequestMapping(value = "/student_answer_node/{course_id}/{mindmap_id}/{node_id}/{username}", method = RequestMethod.GET)
     public List<StudentAnswer> student_answer_node(@PathVariable String course_id, @PathVariable String mindmap_id, @PathVariable String node_id, @PathVariable String username) {
         return nodeChildService.getStudentAnswersForANode(course_id, mindmap_id, node_id, username);
@@ -421,5 +480,25 @@ public class AssignmentController {
     @RequestMapping(value = "/student_real_answer/{longId}/{type}/{username}", method = RequestMethod.GET)
     public AssignmentRealAnswer getRealAnswer(@PathVariable Long longId, @PathVariable int type, @PathVariable String username) {
         return nodeChildService.getRealAnswer(longId, type, username);
+    }
+
+
+    //
+//    @RequestMapping(value = "/updateAnswers2", method = RequestMethod.POST)
+//    public Success updateAnswers2() {
+//        nodeChildService.updateAnswers2();
+//        return new Success();
+//    }
+//
+//    @RequestMapping(value = "/updateNetwork", method = RequestMethod.POST)
+//    public void updateNetwork() {
+//        nodeService.updateNetwork();
+//    }
+
+
+
+    @RequestMapping(value = "/getAllAssignmentShorts", method = RequestMethod.GET)
+    public List<AssignmentShort> getAllAssignmentShorts() {
+        return nodeChildService.getAllAssignmentShort();
     }
 }

@@ -1,5 +1,6 @@
 package application.controller;
 
+import application.jena.JenaService;
 import com.google.gson.Gson;
 import application.controller.json_model.*;
 import application.model.*;
@@ -20,6 +21,8 @@ public class MindmapController {
     private NodeService nodeService;
     @Autowired
     private NodeChildService nodeChildService;
+    @Autowired
+    private JenaService jenaService;
 
     private Gson gson= new Gson();
 
@@ -149,6 +152,17 @@ public class MindmapController {
         boolean flag = mindmapService.resetName(mindmap_id, newName);
         success.setSuccess(flag);
         return success;
+    }
+
+    @RequestMapping(value = "/getNode/{id}", method = RequestMethod.GET)
+    public Node getNode(@PathVariable long id) {
+        Node node = nodeService.getNodeByLongId(id);
+        return node;
+    }
+
+    @RequestMapping(value = "/mindmap_suggestion/{mindmap_id}/{student_id}", method = RequestMethod.GET)
+    public List<Suggestion> getSuggestion(@PathVariable String mindmap_id, @PathVariable long student_id) {
+        return jenaService.getSuggestion(mindmap_id, student_id);
     }
 
     //recursion 递归

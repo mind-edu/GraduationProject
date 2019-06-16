@@ -20,8 +20,8 @@ public interface StudentRepository extends Neo4jRepository<Student, Long> {
     @Query("start student = node({student_id}) match (student)-[:WRITE]->(notes) return notes")
     Note[] findNotes(@Param("student_id") long student_id);
 
-    @Query("MATCH (s:Student) - [i:STUDY_IN] -> (c:Course) WHERE c.course_id = {0} " +
-            "RETURN s.name AS name")
+    @Query("MATCH (s:Student) - [i:STUDY_IN] -> (c:Course)" +
+            " WHERE c.course_id = {0} RETURN s.name AS name, ID(s) AS sid")
     Iterable<Map<String, Object>> findStudentsToCourse(String course_id);
 }
 

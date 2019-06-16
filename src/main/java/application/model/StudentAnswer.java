@@ -11,6 +11,8 @@ public class StudentAnswer {
     private Long id;
     private String studentName;
     private String assignmentId;
+    private long assignmentLongId;
+    private long studentId;
     private String answer;
 
     public String getAnswer() {
@@ -43,5 +45,21 @@ public class StudentAnswer {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public long getAssignmentLongId() {
+        return assignmentLongId;
+    }
+
+    public void setAssignmentLongId(long assignmentLongId) {
+        this.assignmentLongId = assignmentLongId;
+    }
+
+    public long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(long studentId) {
+        this.studentId = studentId;
     }
 }

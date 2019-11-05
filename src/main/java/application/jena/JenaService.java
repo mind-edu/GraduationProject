@@ -19,8 +19,9 @@ import java.util.*;
 
 
 /**
- * Creator: DreamBoy
- * Date: 2019/6/1.
+ * Jena 推理机
+ * @Date 2019/6/1
+ * @author DreamBoy
  */
 
 @Service

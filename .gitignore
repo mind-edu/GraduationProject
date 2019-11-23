@@ -28,3 +28,5 @@
 ./src/Mindmap-Frontend-Ant/package-lock.json
 
 out
+
+src/main/resources/application.properties

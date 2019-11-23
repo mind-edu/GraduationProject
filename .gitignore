@@ -26,3 +26,5 @@
 /.nb-gradle/
 
 ./src/Mindmap-Frontend-Ant/package-lock.json
+
+out

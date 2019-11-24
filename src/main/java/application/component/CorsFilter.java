@@ -13,7 +13,9 @@ import java.util.List;
 public class CorsFilter implements Filter {
 
     final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CorsFilter.class);
-    private final List<String> allowedOrigins = Arrays.asList("http://localhost:4200", "http://52.82.39.104:8899");
+    // 跨域地址添加
+    private final List<String> allowedOrigins = Arrays.asList("http://localhost:4200", "http://52.82.39.104:8899",
+            "http://123.207.40.113:8899","http://localhost:8080","http://123.207.40.113:8080");
 
     public void doFilter2(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
@@ -25,6 +27,14 @@ public class CorsFilter implements Filter {
         chain.doFilter(req, res);
     }
 
+    /**
+     * 过滤器中的跨域设置
+     * @param req
+     * @param res
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         if (req instanceof HttpServletRequest && res instanceof HttpServletResponse) {

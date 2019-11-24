@@ -15,3 +15,5 @@ mvn clean package
 ```
 java -jar mindmap-backend-0.0.1-SNAPSHOT.jar
 ```
+ 
+ 暂时不考虑用 Docker 容器化运行

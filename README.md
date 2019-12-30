@@ -16,7 +16,7 @@ mvn clean package
 java -jar mindmap-backend-0.0.1-SNAPSHOT.jar
 ```
  
- 考虑用 Docker 容器化运行
+ ## 考虑用 Docker 容器化运行
  
 ```
 docker build -t docker-spring-boot .
